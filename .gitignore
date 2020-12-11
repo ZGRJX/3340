@@ -1,3 +1,9 @@
+---
+title: "Life Expectancy Multiple Regression"
+output: html_document
+---
+
+## Installing necessary packages
 ```{r}
 install.packages("dplyr")
 install.packages("ggplot2")
@@ -44,27 +50,298 @@ str(LifeExpectancyData)
 ```{r}
 summary <- summary(LifeExpectancyData)
 ```
+## Finding out the number of countries and the countries itself
+```{r}
+unique(LifeExpectancyData$Country)
+```
+## Getting a glimpse of LifeExpectancyData
+```{r}
+glimpse(LifeExpectancyData)
+```
+## Finding out the number of data entries by Status
+```{r}
+LifeExpectancyData %>%
+  count(Status) %>%
+  arrange(n)
+```
+## Displaying the number of data entries by Status (Bar chart)
+```{r}
+ggplot(LifeExpectancyData, aes(x = Status)) +
+  geom_bar(fill = "lightblue", col="grey") +
+  ylab("Number")
+```
+## Displaying the number of data entries by Status (Pie chart)
+```{r}
+var <- LifeExpectancyData %>%
+  count(Status) %>%
+  arrange(n)
 
+ggplot(var, aes(x= "", y = n, fill = Status)) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start=0)
+```
+## Finding out the number of data entries by Year
+```{r}
+LifeExpectancyData %>%
+  count(Year) %>%
+  arrange(Year)
+```
+##---- Displaying the number of data entries by Year
+```{r}
+ggplot(LifeExpectancyData, aes(x = Year))+
+  geom_bar(fill = "lightblue",
+           col="grey")+
+  ylab("Amount")
+```
+## Plotting the life expectancy
+```{r}
+ggplot(LifeExpectancyData, aes(x=Life.expectancy)) +
+  geom_histogram(bins=10, color="grey", fill="lightblue") +
+  ylab('Count')
+```
+## Plotting the life expectancy by Status Developing
+```{r}
+ggplot(LifeExpectancyData[LifeExpectancyData$Status == "Developing",], aes(x=Life.expectancy)) +
+  geom_histogram(bins=10, color="grey", fill="lightblue") +
+  ylab('Count')
+```
+## Plotting the life expectancy by Status Developed
+```{r}
+ggplot(LifeExpectancyData[LifeExpectancyData$Status == "Developed",], aes(x=Life.expectancy)) +
+  geom_histogram(bins=10, color="grey", fill="lightblue") +
+  ylab('Count')
+```
+## Plotting the life expectancy by Status
+```{r}
+ggplot(LifeExpectancyData, aes(Life.expectancy, fill = Status)) +
+  geom_histogram(bins=10, alpha = 0.6, aes(y = ..density..), position = 'identity') +
+  ylab('Count')
+```
+## Finding out the mean, median, and standard deviation by Status
+```{r}
+LifeExpectancyData %>%
+  group_by(Status) %>%
+  summarise(mean = mean(Life.expectancy), median = median(Life.expectancy), sd = sd(Life.expectancy)) %>%
+  arrange(desc(mean))
+```
+## Finding out the mean, median, and standard deviation by Year
+```{r}
+years <- LifeExpectancyData %>%
+  group_by(Year) %>%
+  summarise(mean = mean(Life.expectancy), median = median(Life.expectancy), sd = sd(Life.expectancy))
+```
+## Finding out the difference between last and first mean, median, and standard deviation
+```{r}
+dif <- years[years$Year == 2014,] - years[years$Year == 2000,] 
+```
+## Plotting the adult mortality
+```{r}
+par(mfrow=c(1,2))
+hist(LifeExpectancyData$Adult.Mortality,main = "Adult Mortality", ylab = "Count", xlab = "Deaths",col = "lightblue", border = "grey")
+```
+## Plotting the adult mortality
+```{r}
+hist(LifeExpectancyData$infant.deaths,main = "Infant Deaths", ylab = "Count", xlab = "Deaths",col = "lightblue", border = "grey")
+```
+## Plotting the adult mortality by Status
+```{r}
+ggplot(LifeExpectancyData, aes(x=Adult.Mortality, fill = Status)) +
+  geom_histogram(bins=10, alpha = 0.4, aes(y = ..density..), position = 'identity') +
+  ylab('Count')
+```
+## Plotting the infant deaths by Status
+```{r}
+ggplot(LifeExpectancyData, aes(x=infant.deaths, fill = Status)) +
+  geom_histogram(bins=10, alpha = 0.4, aes(y = ..density..), position = 'identity') +
+  ylab('Count')
+```
+## Plotting other 4 variables
+```{r}
+par(mfrow=c(1,4))
 
+hist(LifeExpectancyData$Alcohol,main = "Alcohol", ylab = "Count", xlab = "Alcohol consumption per capita ",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$percentage.expenditure,main = "Percentage Expenditure", ylab = "Count", xlab = "%",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Hepatitis.B,main = "Hepatitis B", ylab = "Count", xlab = "Deaths",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Measles,main = "Measles", ylab = "Count", xlab = "Deaths",col = "lightblue", border = "grey")
+```
+## Plotting other 4 variables
+```{r}
+par(mfrow=c(1,4))
 
+hist(LifeExpectancyData$BMI,main = "BMI", xlab = "kg/m^2", ylab = "Count", col = "lightblue", border = "grey")
+hist(LifeExpectancyData$under.five.deaths,main = "Under 5 deaths",xlab = "Deaths", ylab = "Count",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Polio,main = "Polio", xlab = "Deaths", ylab = "Count",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Total.expenditure,main = "Total expenditure", xlab = "$", ylab = "Count", col = "lightblue", border = "grey")
+```
+## Plotting other 4 variables
+```{r}
+par(mfrow=c(1,4))
 
+hist(LifeExpectancyData$Diphtheria,main = "Diphtheria", xlab = "Deaths", ylab = "Count", col = "lightblue", border = "grey")
+hist(LifeExpectancyData$HIV.AIDS,main = "HIV/AIDS",xlab = "Deaths", ylab = "Count",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$GDP,main = "GDP", xlab = "$", ylab = "Count",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Population,main = "Population", xlab = "People", ylab = "Count", col = "lightblue", border = "grey")
+```
+## Plotting the last 4 variables
+```{r}
+par(mfrow=c(1,4))
 
+hist(LifeExpectancyData$thinness..1.19.years,main = "Thinness..1.19", xlab = "People", ylab = "Count", col = "lightblue", border = "grey")
+hist(LifeExpectancyData$thinness.5.9.years,main = "Thinness..5.9",xlab = "People", ylab = "Count",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Income.composition.of.resources,main = "Income", xlab = "$", ylab = "Count",col = "lightblue", border = "grey")
+hist(LifeExpectancyData$Schooling,main = "Schooling/Education", xlab = "Years", ylab = "Count", col = "lightblue", border = "grey")
+```
+## Removing all data entries with missing value
+```{r}
+LifeExpectancyData_new <- na.omit(LifeExpectancyData)
+```
+## Removing two first categorical variables
+```{r}
+install.packages("tidyverse")
 
+library(tidyverse)
 
+LifeExpectancyData_new <- select(LifeExpectancyData_new, -Country)
+LifeExpectancyData_new <- select(LifeExpectancyData_new, -Year)
+```
+## Making dummy variable out of Status
+```{r}
+LifeExpectancyData_new$Status <- ifelse(LifeExpectancyData_new$Status == "Developed", 1, 0)
+```
+## Checking
+```{r}
+str(LifeExpectancyData_new)
+```
+## Correlation matrix
+```{r}
+corMatrix = cor(LifeExpectancyData_new, method = "pearson")
+corMatrix
 
+install.packages("reshape2")
+library(reshape2)
+corMatrix <- melt(corMatrix)
 
+ggheatmap <- ggplot(corMatrix, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, 
+                                   size = 9, hjust = 1))+
+  coord_fixed()
 
+ggheatmap + 
+  geom_text(aes(Var2, Var1, label = round(value, digits = 2)), color = "black", size = 1.8)
 
+```
+## Removing the variables after correlation analysis
+```{r}
+LifeExpectancyData_new <- select(LifeExpectancyData_new, -percentage.expenditure)
+LifeExpectancyData_new <- select(LifeExpectancyData_new, -under.five.deaths)
+```
 
+## Full model
+```{r}
+fullModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                  Alcohol+Hepatitis.B+Measles+BMI+Polio+Total.expenditure+
+                  Diphtheria+HIV.AIDS+GDP+Population+thinness..1.19.years+
+                  thinness.5.9.years+Income.composition.of.resources+
+                  Schooling, data = LifeExpectancyData_new)
+summary(fullModel)
+```
 
+## Model without thinness.5.9.year
+```{r}
+secondModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                    Alcohol+Hepatitis.B+Measles+BMI+Polio+Total.expenditure+
+                    Diphtheria+HIV.AIDS+GDP+Population+thinness..1.19.years+
+                    Income.composition.of.resources+
+                    Schooling, data = LifeExpectancyData_new)
+summary(secondModel)
 
+anova(secondModel, fullModel)
+```
 
+## Model without thinness.5.9.year and Population
+```{r}
+thirdModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                    Alcohol+Hepatitis.B+Measles+BMI+Polio+Total.expenditure+
+                    Diphtheria+HIV.AIDS+GDP+thinness..1.19.years+
+                    Income.composition.of.resources+
+                    Schooling, data = LifeExpectancyData_new)
+summary(thirdModel)
 
+anova(thirdModel, secondModel)
+```
+## Model without thinness.5.9.year, Population, and Measles
+```{r}
+fourthModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                   Alcohol+Hepatitis.B+BMI+Polio+Total.expenditure+
+                   Diphtheria+HIV.AIDS+GDP+thinness..1.19.years+
+                   Income.composition.of.resources+
+                   Schooling, data = LifeExpectancyData_new)
+summary(fourthModel)
 
+anova(fourthModel, thirdModel)
+```
 
+## Model without thinness.5.9.year, Population, Measles, and thinness..1.19.years
+```{r}
+fifthModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                    Alcohol+Hepatitis.B+BMI+Polio+Total.expenditure+
+                    Diphtheria+HIV.AIDS+GDP+
+                    Income.composition.of.resources+
+                    Schooling, data = LifeExpectancyData_new)
+summary(fifthModel)
 
+anova(fifthModel,fourthModel)
+```
 
+## Model without thinness.5.9.year, Population, Measles,thinness..1.19.years, and Hepatitis.B
+```{r}
+sixthModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                   Alcohol+BMI+Polio+Total.expenditure+
+                   Diphtheria+HIV.AIDS+GDP+
+                   Income.composition.of.resources+
+                   Schooling, data = LifeExpectancyData_new)
+summary(sixthModel)
 
+anova(sixthModel, fifthModel)
+```
 
+## Model without thinness.5.9.year, Population, Measles,thinness..1.19.years, Hepatitis.B, and Polio
+```{r}
+seventhModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                   Alcohol+BMI+Total.expenditure+
+                   Diphtheria+HIV.AIDS+GDP+
+                   Income.composition.of.resources+
+                   Schooling, data = LifeExpectancyData_new)
+summary(seventhModel)
 
+anova(seventhModel, sixthModel)
+```
 
+## Model without thinness.5.9.year, Population, Measles,thinness..1.19.years, Hepatitis.B, Polio, and Total.expenditure
+```{r}
+eighthModel <- lm(Life.expectancy~Status+Adult.Mortality+infant.deaths+
+                     Alcohol+BMI+
+                     Diphtheria+HIV.AIDS+GDP+
+                     Income.composition.of.resources+
+                     Schooling, data = LifeExpectancyData_new)
+summary(eighthModel)
+
+anova(eighthModel, seventhModel)
+```
+
+## Model without thinness.5.9.year, Population, Measles,thinness..1.19.years, Hepatitis.B, Polio, Total.expenditure, infant.deaths
+```{r}
+ninthModel <- lm(Life.expectancy~Status+Adult.Mortality+
+                    Alcohol+BMI+
+                    Diphtheria+HIV.AIDS+GDP+
+                    Income.composition.of.resources+
+                    Schooling, data = LifeExpectancyData_new)
+summary(ninthModel)
+
+anova(ninthModel, eighthModel)
+```
