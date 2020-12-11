@@ -1,3 +1,49 @@
+```{r}
+install.packages("dplyr")
+install.packages("ggplot2")
+```
+
+## Loading these packages into our project
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+## Setting up working directory
+```{r}
+setwd("Documents")
+```
+
+## Importing data
+```{r}
+LifeExpectancyData = read.csv("Life Expectancy Data.csv", stringsAsFactors = FALSE)
+```
+## Determining class object of LifeExpectancyData
+```{r}
+class(LifeExpectancyData)
+```
+
+## Finding out the number of data entries
+```{r}
+count(LifeExpectancyData)
+```
+
+## Finding out the number of dimensions (variables)
+```{r}
+dim(LifeExpectancyData)
+```
+## Displaying the names of variables
+```{r}
+names(LifeExpectancyData)
+```
+## Determining the internal structure of LifeExpectancyData
+```{r}
+str(LifeExpectancyData)
+```
+## Getting a summary of all the variables
+```{r}
+summary <- summary(LifeExpectancyData)
+```
 
 
 
